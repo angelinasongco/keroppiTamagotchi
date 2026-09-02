@@ -126,13 +126,15 @@ FONT = {
     "?":["01110","10001","00001","00010","00100","00000","00100"],
     "-":["00000","00000","00000","11111","00000","00000","00000"],
     " ":["00000"]*7,
+    "಄": ["01110","10001","00111","01001","10111","10001","01110"],
+    "✦": ["00100","10101","01110","11111","01110","10101","00100"],
 }
 
 def text(x, y, s, scale=1):
     """Draw text onto the 128x64 framebuffer."""
     cursor = x
     for ch in s.upper():
-        glyph = FONT.get(ch, FONT["?"])
+        glyph = FONT.get(ch, FONT["✦"])
         for gy, row in enumerate(glyph):
             for gx, bit in enumerate(row):
                 if bit == "1":
@@ -156,35 +158,74 @@ message_until = 0
 
 menu_items = ["FOOD", "PLAY", "SLEEP"]
 
+def circle(cx, cy, radius, fill=False):
+    """Draw a circle centered at (cx, cy)."""
+    for y in range(-radius, radius + 1):
+        for x in range(-radius, radius + 1):
+            distance = x*x + y*y
+
+            if fill:
+                if distance <= radius*radius:
+                    pixel(cx + x, cy + y)
+            else:
+                if (radius - 1)**2 <= distance <= radius**2:
+                    pixel(cx + x, cy + y)
+
 def pet_sprite(cx, cy, anim):
-    # Body
-    rect(cx-16, cy-15, 32, 28, fill=False)
+    """Draw a tiny monochrome Keroppi-style frog pet."""
+    # Move the character up one pixel every few frames for a gentle bounce.
+    cy -= (anim // 12) % 2
 
-    # Ears
-    line(cx-16, cy-13, cx-22, cy-20)
-    line(cx+16, cy-13, cx+22, cy-20)
+    # Large connected frog eyes. The OLED is monochrome, so white areas in
+    # the reference image are represented by empty pixels inside the outlines.
+    circle(cx - 9, cy - 13, 10, fill=False)
+    circle(cx + 9, cy - 13, 10, fill=False)
 
-    # Eyes blink every so often
+    # Blink periodically; otherwise draw the square pupils from the reference.
     blink = (anim % 120) in range(58, 64)
     if blink:
-        line(cx-9, cy-3, cx-5, cy-3)
-        line(cx+5, cy-3, cx+9, cy-3)
+        #left eye
+        line(cx-17, cy-12, cx, cy-12)
+        # right eye
+        line(cx, cy-12, cx+17, cy-12)
     else:
-        rect(cx-9, cy-6, 4, 5, fill=True)
-        rect(cx+5, cy-6, 4, 5, fill=True)
+        circle(cx-9, cy-13, 3, fill=True)
+        circle(cx+9, cy-13, 3, fill=True)
 
-    # Nose/mouth
-    pixel(cx, cy+1)
-    line(cx-4, cy+5, cx, cy+7)
-    line(cx, cy+7, cx+4, cy+5)
+    # Wide frog face and round cheeks.
+    line(cx-22, cy-4, cx-24, cy+1)
+    line(cx-24, cy+1, cx-24, cy+9)
+    line(cx+22, cy-4, cx+24, cy+1)
+    line(cx+24, cy+1, cx+24, cy+9)
+    rect(cx-19, cy, 7, 6, fill=False)
+    rect(cx+12, cy, 7, 6, fill=False)
 
-    # Feet animate
-    if (anim // 12) % 2 == 0:
-        line(cx-10, cy+13, cx-14, cy+18)
-        line(cx+10, cy+13, cx+14, cy+18)
-    else:
-        line(cx-10, cy+13, cx-7, cy+18)
-        line(cx+10, cy+13, cx+7, cy+18)
+    # Keroppi's curved smile.
+    line(cx-10, cy+6, cx-7, cy+9)
+    line(cx-7, cy+9, cx-3, cy+9)
+    line(cx-3, cy+9, cx, cy+11)
+    line(cx, cy+11, cx+3, cy+9)
+    line(cx+3, cy+9, cx+7, cy+9)
+    line(cx+7, cy+9, cx+10, cy+6)
+
+    # # Short arms beside the striped shirt.
+    # line(cx-18, cy+10, cx-23, cy+15)
+    # line(cx-23, cy+15, cx-19, cy+18)
+    # line(cx+18, cy+10, cx+23, cy+15)
+    # line(cx+23, cy+15, cx+19, cy+18)
+
+    # # Shirt outline and three dark horizontal stripes.
+    # rect(cx-16, cy+11, 32, 17, fill=False)
+    # rect(cx-15, cy+13, 30, 3, fill=True)
+    # rect(cx-15, cy+19, 30, 3, fill=True)
+    # rect(cx-15, cy+25, 30, 2, fill=True)
+
+    # Feet alternate slightly to preserve the original walking animation.
+    # if (anim // 12) % 2 == 0:
+    #     rect(cx-15, cy+28, 12, 4, fill=False)
+    #     rect(cx+5, cy+28, 12, 4, fill=False)
+    # else:
+    #     rect(cx-13, cy+28, 12, 4, fill=False)
 
 def bar(x, y, w, value):
     rect(x, y, w, 7)
@@ -194,7 +235,6 @@ def bar(x, y, w, value):
             pixel(xx, yy)
 
 def draw_pet_screen():
-    text(2, 1, "HAPPY", 1)
 
     # Read the current Pacific time every time the OLED is redrawn.
     # Seconds are included so the clock visibly advances in real time.
