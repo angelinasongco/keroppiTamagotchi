@@ -25,6 +25,8 @@ SCALE = 7
 
 BG = "#050505"
 PIXEL = "#D8D8D8"
+GRID_COLOR = "#303030"
+SHOW_GRID = True
 
 # Pacific Time automatically switches between PST (UTC-8) and PDT (UTC-7).
 PACIFIC_TIME = ZoneInfo("America/Los_Angeles")
@@ -174,7 +176,7 @@ def circle(cx, cy, radius, fill=False):
 def pet_sprite(cx, cy, anim):
     """Draw a tiny monochrome Keroppi-style frog pet."""
     # Move the character up one pixel every few frames for a gentle bounce.
-    cy -= (anim // 12) % 2
+    # cy -= (anim // 12) % 2
 
     # Large connected frog eyes. The OLED is monochrome, so white areas in
     # the reference image are represented by empty pixels inside the outlines.
@@ -189,16 +191,29 @@ def pet_sprite(cx, cy, anim):
         # right eye
         line(cx, cy-12, cx+17, cy-12)
     else:
-        circle(cx-9, cy-13, 3, fill=True)
-        circle(cx+9, cy-13, 3, fill=True)
+        circle(cx-6, cy-13, 3, fill=True)
+        circle(cx+6, cy-13, 3, fill=True)
 
     # Wide frog face and round cheeks.
-    line(cx-22, cy-4, cx-24, cy+1)
-    line(cx-24, cy+1, cx-24, cy+9)
-    line(cx+22, cy-4, cx+24, cy+1)
-    line(cx+24, cy+1, cx+24, cy+9)
-    rect(cx-19, cy, 7, 6, fill=False)
-    rect(cx+12, cy, 7, 6, fill=False)
+    # pixel(cx-18, cy)
+    line(cx-17, cy-6, cx-21, cy-1)
+    line(cx-21, cy, cx-21, cy+5)
+    line(cx+17, cy-6, cx+21, cy-1)
+    line(cx+21, cy, cx+21, cy+5)
+    line(cx-21, cy+5, cx-17, cy+10)
+    line(cx+21, cy+5, cx+17, cy+10)
+    line(cx+16, cy+11, cx+13, cy+11) # right side detail
+    line(cx-16, cy+11, cx-13, cy+11) # left side detail
+    line(cx+13, cy+12, cx+10, cy+12) # right side detail continuation
+    line(cx-13, cy+12, cx-10, cy+12) # left side detail continuation
+    line(cx+10, cy+13, cx, cy+14) # right side detail continuation
+    line(cx-10, cy+13, cx, cy+14) # left side detail continuation
+
+
+    circle(cx-15, cy+2, 3, fill=True) # left cheek
+    circle(cx+15, cy+2, 3, fill=True) # right cheek
+    # rect(cx-19, cy, 7, 6, fill=False)
+    # rect(cx+12, cy, 7, 6, fill=False)
 
     # Keroppi's curved smile.
     line(cx-10, cy+6, cx-7, cy+9)
@@ -305,6 +320,19 @@ def draw():
                     (x+1)*SCALE, (y+1)*SCALE,
                     fill=PIXEL, outline=""
                 )
+    # Draw grid lines last so the boundary of every OLED pixel stays visible,
+    # including the boundaries between neighboring filled pixels.
+    if SHOW_GRID:
+        for x in range(OLED_W + 1):
+            canvas.create_line(
+                x*SCALE, 0, x*SCALE, OLED_H*SCALE,
+                fill=GRID_COLOR
+            )
+        for y in range(OLED_H + 1):
+            canvas.create_line(
+                0, y*SCALE, OLED_W*SCALE, y*SCALE,
+                fill=GRID_COLOR
+            )
 
 def action():
     global hunger, happy, energy, message, message_until
