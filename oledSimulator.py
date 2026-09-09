@@ -85,6 +85,19 @@ def line(x0, y0, x1, y1):
             err += dx
             y0 += sy
 
+def circle(cx, cy, radius, fill=False):
+    """Draw a circle centered at (cx, cy)."""
+    for y in range(-radius, radius + 1):
+        for x in range(-radius, radius + 1):
+            distance = x*x + y*y
+
+            if fill:
+                if distance <= radius*radius:
+                    pixel(cx + x, cy + y)
+            else:
+                if (radius - 1)**2 <= distance <= radius**2:
+                    pixel(cx + x, cy + y)
+
 # -----------------------------
 # Tiny 5x7 font
 # -----------------------------
@@ -177,18 +190,6 @@ runner_spawn_timer = 45
 runner_score = 0
 runner_game_over = False
 
-def circle(cx, cy, radius, fill=False):
-    """Draw a circle centered at (cx, cy)."""
-    for y in range(-radius, radius + 1):
-        for x in range(-radius, radius + 1):
-            distance = x*x + y*y
-
-            if fill:
-                if distance <= radius*radius:
-                    pixel(cx + x, cy + y)
-            else:
-                if (radius - 1)**2 <= distance <= radius**2:
-                    pixel(cx + x, cy + y)
 
 def pet_sprite(cx, cy, anim):
     """Draw a tiny monochrome Keroppi-style frog pet."""
