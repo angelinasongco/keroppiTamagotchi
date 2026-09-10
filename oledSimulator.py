@@ -190,75 +190,124 @@ runner_spawn_timer = 45
 runner_score = 0
 runner_game_over = False
 
-
 def pet_sprite(cx, cy, anim):
-    """Draw a tiny monochrome Keroppi-style frog pet."""
-    # Move the character up one pixel every few frames for a gentle bounce.
+    """Draw a smaller Keroppi-style frog."""
+
+    # Gentle bouncing animation
     cy -= (anim // 12) % 2
 
-    # Large connected frog eyes. The OLED is monochrome, so white areas in
-    # the reference image are represented by empty pixels inside the outlines.
-    circle(cx - 9, cy - 13, 10, fill=False)
-    circle(cx + 9, cy - 13, 10, fill=False)
+    # Smaller connected eyes
+    circle(cx - 6, cy - 8, 7, fill=False)
+    circle(cx + 6,cy - 8, 7, fill=False)
 
-    # Blink periodically; otherwise draw the square pupils from the reference.
+    # Blink periodically
     blink = (anim % 120) in range(58, 64)
+
     if blink:
-        #left eye
-        line(cx-17, cy-12, cx, cy-12)
-        # right eye
-        line(cx, cy-12, cx+17, cy-12)
+        line(cx - 10, cy - 8, cx, cy - 8)
+        line(cx, cy - 8, cx + 10, cy - 8)
     else:
-        circle(cx-6, cy-13, 3, fill=True)
-        circle(cx+6, cy-13, 3, fill=True)
-
-    # Wide frog face and round cheeks.
-    # pixel(cx-18, cy)
-    line(cx-17, cy-6, cx-21, cy-1)
-    line(cx-21, cy, cx-21, cy+5)
-    line(cx+17, cy-6, cx+21, cy-1)
-    line(cx+21, cy, cx+21, cy+5)
-    line(cx-21, cy+5, cx-17, cy+10)
-    line(cx+21, cy+5, cx+17, cy+10)
-    line(cx+16, cy+11, cx+13, cy+11) # right side detail
-    line(cx-16, cy+11, cx-13, cy+11) # left side detail
-    line(cx+13, cy+12, cx+10, cy+12) # right side detail continuation
-    line(cx-13, cy+12, cx-10, cy+12) # left side detail continuation
-    line(cx+10, cy+13, cx, cy+14) # right side detail continuation
-    line(cx-10, cy+13, cx, cy+14) # left side detail continuation
+        # Smaller pupils
+        rect(cx - 5, cy - 8, 3, 3, fill=True) #left eye
+        rect(cx + 3, cy - 8, 3, 3, fill=True) #right eye
 
 
-    circle(cx-15, cy+2, 3, fill=True) # left cheek
-    circle(cx+15, cy+2, 3, fill=True) # right cheek
-    # rect(cx-19, cy, 7, 6, fill=False)
-    # rect(cx+12, cy, 7, 6, fill=False)
+    # Smaller face outline
+    line(cx - 11, cy - 4, cx - 14, cy - 1)
+    line(cx - 14, cy - 1, cx - 14, cy + 4)
+    line(cx - 14, cy + 4, cx - 11, cy + 7)
 
-    # Keroppi's curved smile.
-    line(cx-10, cy+6, cx-7, cy+9)
-    line(cx-7, cy+9, cx-3, cy+9)
-    line(cx-3, cy+9, cx, cy+11)
-    line(cx, cy+11, cx+3, cy+9)
-    line(cx+3, cy+9, cx+7, cy+9)
-    line(cx+7, cy+9, cx+10, cy+6)
+    line(cx + 11, cy - 4, cx + 14, cy - 1)
+    line(cx + 14, cy - 1, cx + 14, cy + 4)
+    line(cx + 14, cy + 4, cx + 11, cy + 7)
 
-    # # Short arms beside the striped shirt.
-    # line(cx-18, cy+10, cx-23, cy+15)
-    # line(cx-23, cy+15, cx-19, cy+18)
-    # line(cx+18, cy+10, cx+23, cy+15)
-    # line(cx+23, cy+15, cx+19, cy+18)
+    # Bottom of face
+    line(cx - 11, cy + 7, cx - 7, cy + 9)
+    line(cx - 7, cy + 9, cx, cy + 10)
+    line(cx, cy + 10, cx + 7, cy + 9)
+    line(cx + 7, cy + 9, cx + 11, cy + 7)
 
-    # # Shirt outline and three dark horizontal stripes.
-    # rect(cx-16, cy+11, 32, 17, fill=False)
-    # rect(cx-15, cy+13, 30, 3, fill=True)
-    # rect(cx-15, cy+19, 30, 3, fill=True)
-    # rect(cx-15, cy+25, 30, 2, fill=True)
+    # Smaller cheeks
+    circle(cx - 10, cy + 1, 2, fill=True)
+    circle(cx + 10, cy + 1, 2, fill=True)
 
-    # Feet alternate slightly to preserve the original walking animation.
-    # if (anim // 12) % 2 == 0:
-    #     rect(cx-15, cy+28, 12, 4, fill=False)
-    #     rect(cx+5, cy+28, 12, 4, fill=False)
-    # else:
-    #     rect(cx-13, cy+28, 12, 4, fill=False)
+    # Smaller smile
+    line(cx - 6, cy + 3, cx - 4, cy + 5)
+    line(cx - 4, cy + 5, cx - 2, cy + 5)
+    line(cx - 2, cy + 5, cx, cy + 7)
+
+    line(cx, cy + 7, cx + 2, cy + 5)
+    line(cx + 2, cy + 5, cx + 4, cy + 5)
+    line(cx + 4, cy + 5, cx + 6, cy + 3)
+
+# def pet_sprite(cx, cy, anim):
+#     """Draw a tiny monochrome Keroppi-style frog pet."""
+#     # Move the character up one pixel every few frames for a gentle bounce.
+#     cy -= (anim // 12) % 2
+
+#     # Large connected frog eyes. The OLED is monochrome, so white areas in
+#     # the reference image are represented by empty pixels inside the outlines.
+#     circle(cx - 9, cy - 13, 10, fill=False)
+#     circle(cx + 9, cy - 13, 10, fill=False)
+
+#     # Blink periodically; otherwise draw the square pupils from the reference.
+#     blink = (anim % 120) in range(58, 64)
+#     if blink:
+#         #left eye
+#         line(cx-17, cy-12, cx, cy-12)
+#         # right eye
+#         line(cx, cy-12, cx+17, cy-12)
+#     else:
+#         circle(cx-6, cy-13, 3, fill=True)
+#         circle(cx+6, cy-13, 3, fill=True)
+
+#     # Wide frog face and round cheeks.
+#     # pixel(cx-18, cy)
+#     line(cx-17, cy-6, cx-21, cy-1)
+#     line(cx-21, cy, cx-21, cy+5)
+#     line(cx+17, cy-6, cx+21, cy-1)
+#     line(cx+21, cy, cx+21, cy+5)
+#     line(cx-21, cy+5, cx-17, cy+10)
+#     line(cx+21, cy+5, cx+17, cy+10)
+#     line(cx+16, cy+11, cx+13, cy+11) # right side detail
+#     line(cx-16, cy+11, cx-13, cy+11) # left side detail
+#     line(cx+13, cy+12, cx+10, cy+12) # right side detail continuation
+#     line(cx-13, cy+12, cx-10, cy+12) # left side detail continuation
+#     line(cx+10, cy+13, cx, cy+14) # right side detail continuation
+#     line(cx-10, cy+13, cx, cy+14) # left side detail continuation
+
+
+#     circle(cx-15, cy+2, 3, fill=True) # left cheek
+#     circle(cx+15, cy+2, 3, fill=True) # right cheek
+#     # rect(cx-19, cy, 7, 6, fill=False)
+#     # rect(cx+12, cy, 7, 6, fill=False)
+
+#     # Keroppi's curved smile.
+#     line(cx-10, cy+6, cx-7, cy+9)
+#     line(cx-7, cy+9, cx-3, cy+9)
+#     line(cx-3, cy+9, cx, cy+11)
+#     line(cx, cy+11, cx+3, cy+9)
+#     line(cx+3, cy+9, cx+7, cy+9)
+#     line(cx+7, cy+9, cx+10, cy+6)
+
+#     # # Short arms beside the striped shirt.
+#     # line(cx-18, cy+10, cx-23, cy+15)
+#     # line(cx-23, cy+15, cx-19, cy+18)
+#     # line(cx+18, cy+10, cx+23, cy+15)
+#     # line(cx+23, cy+15, cx+19, cy+18)
+
+#     # # Shirt outline and three dark horizontal stripes.
+#     # rect(cx-16, cy+11, 32, 17, fill=False)
+#     # rect(cx-15, cy+13, 30, 3, fill=True)
+#     # rect(cx-15, cy+19, 30, 3, fill=True)
+#     # rect(cx-15, cy+25, 30, 2, fill=True)
+
+#     # Feet alternate slightly to preserve the original walking animation.
+#     # if (anim // 12) % 2 == 0:
+#     #     rect(cx-15, cy+28, 12, 4, fill=False)
+#     #     rect(cx+5, cy+28, 12, 4, fill=False)
+#     # else:
+#     #     rect(cx-13, cy+28, 12, 4, fill=False)
 
 def bar(x, y, w, value):
     rect(x, y, w, 7)
@@ -314,7 +363,7 @@ def reset_runner():
     global runner_score, runner_game_over
 
     frog_y = 47.0
-    frog_velocity = 0.0
+    frog_velocity = 2.0
     frog_on_ground = True
     runner_obstacles = []
     runner_spawn_timer = 45
